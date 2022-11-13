@@ -1,0 +1,54 @@
+[data-direction="horizontal"] > .grid-item > [data-divider] {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  content: "";
+  width: 8px;
+  background: #ccc;
+  touch-action: none;
+  opacity: 0;
+}
+
+[data-direction="vertical"] > .grid-item > [data-divider] {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  content: "";
+  height: 8px;
+  background: #ccc;
+  touch-action: none;
+  opacity: 0;
+}
+
+.grid-item:last-of-type > [data-divider] {
+  display: none;
+}
+
+[data-direction="vertical"] > .grid-item > [data-divider]:hover {
+  cursor: row-resize;
+  opacity: 1;
+}
+
+[data-direction="horizontal"] > .grid-item > [data-divider]:hover {
+  cursor: col-resize;
+  opacity: 1;
+}
+
+[data-divider] {
+  outline: none !important;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+[data-divider]:hover {
+  opacity: 1;
+}
+
+.grid-item {
+  border-radius: 0;
+}
