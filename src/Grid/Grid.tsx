@@ -87,7 +87,7 @@ type Actions =
       name: "REMOVE";
       payload: {
         parentId: string;
-        index: number;
+        targetId: string;
       };
     };
 
@@ -161,6 +161,23 @@ export function reducer(state: Template, action: Actions) {
       // is there no parent?
 
       return state;
+    }
+
+    case "REMOVE": {
+      const { parentId, targetId } = action.payload;
+
+      const parent = state[parentId];
+      const newItems = [...parent.items].filter((item) => item !== targetId);
+
+      delete state.targetId;
+
+      return {
+        ...state,
+        [parentId]: {
+          ...parent,
+          items: newItems,
+        },
+      };
     }
 
     case "ADD_ROW": {
@@ -450,6 +467,21 @@ export function Grid({
             }}
           >
             row after
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+
+              dispatch({
+                name: "REMOVE",
+                payload: {
+                  parentId: parentId,
+                  targetId: template.id,
+                },
+              });
+            }}
+          >
+            remove
           </button>
         </div>
       )}
