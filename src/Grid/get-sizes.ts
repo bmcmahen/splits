@@ -49,9 +49,8 @@ export function getCombinedMinSizes(
 export const defaultTemplate: Template = {
   root: {
     id: "root",
-    direction: "horizontal",
+
     size: 1000,
-    items: ["a", "b"],
   },
   a: {
     id: "a",

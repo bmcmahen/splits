@@ -97,8 +97,6 @@ export function reducer(state: Template, action: Actions) {
       const { parentId, before, targetId } = action.payload;
       const parent = state[parentId];
 
-      console.log("add col", parentId, before, targetId);
-
       // is the parent already split into columns? then we just add a new column
       if (parent && parent.direction && parent.direction === "horizontal") {
         const newId = Math.random().toString(36).substr(2, 9);
@@ -139,10 +137,26 @@ export function reducer(state: Template, action: Actions) {
         };
       }
 
-      // is the parent split into rows?
-      if (parent && parent.direction && parent.direction === "vertical") {
-        return state;
-      }
+      const newId = Math.random().toString(36).substr(2, 9);
+      const subChildId = Math.random().toString(36).substr(2, 9);
+
+      return {
+        ...state,
+        [targetId]: {
+          ...state[targetId],
+          direction: "horizontal",
+          items: [newId, subChildId],
+        },
+        [newId]: {
+          id: newId,
+          size: 500,
+        },
+        [subChildId]: {
+          ...state[targetId],
+          id: subChildId,
+          size: 500,
+        },
+      };
 
       // is there no parent?
 
@@ -150,6 +164,72 @@ export function reducer(state: Template, action: Actions) {
     }
 
     case "ADD_ROW": {
+      const { parentId, before, targetId } = action.payload;
+      const parent = state[parentId];
+
+      // is the parent already split into columns? then we just add a new column
+      if (parent && parent.direction && parent.direction === "vertical") {
+        const newId = Math.random().toString(36).substr(2, 9);
+
+        // get size of new column, defaulting to col being equal sized
+        const nextSize =
+          document.getElementById(parentId)?.getBoundingClientRect().width /
+          (parent.items.length + 1);
+
+        const newContent: Content = {
+          id: newId,
+          size: nextSize,
+        };
+
+        // remove some size from each existing child. todo: account for min sizes
+        parent.items.forEach((id) => {
+          const { height } = document
+            .getElementById(id)
+            ?.getBoundingClientRect();
+          const nextheight = height - height / (parent.items.length + 1);
+          state[id].size = nextheight;
+        });
+
+        const newItems = [...parent.items];
+        const targetIndex = newItems.indexOf(targetId.toString());
+        if (before) {
+          newItems.splice(targetIndex, 0, newId);
+        } else {
+          newItems.splice(targetIndex + 1, 0, newId);
+        }
+        return {
+          ...state,
+          [newId]: newContent,
+          [parentId]: {
+            ...parent,
+            items: newItems,
+          },
+        };
+      }
+
+      const newId = Math.random().toString(36).substr(2, 9);
+      const subChildId = Math.random().toString(36).substr(2, 9);
+
+      return {
+        ...state,
+        [targetId]: {
+          ...state[targetId],
+          direction: "vertical",
+          items: [newId, subChildId],
+        },
+        [newId]: {
+          id: newId,
+          size: 500,
+        },
+        [subChildId]: {
+          ...state[targetId],
+          id: subChildId,
+          size: 500,
+        },
+      };
+
+      // is there no parent?
+
       return state;
     }
 
@@ -281,18 +361,6 @@ export function Grid({
       }}
       data-direction={template.direction}
       className="grid-item"
-      onClick={(e) => {
-        e.stopPropagation();
-        console.log("add col");
-        dispatch({
-          name: "ADD_COLUMN",
-          payload: {
-            parentId: parentId,
-            targetId: template.id,
-            before: true,
-          },
-        });
-      }}
     >
       {template.items ? (
         <>
@@ -312,7 +380,78 @@ export function Grid({
           })}
         </>
       ) : (
-        <>{content}</>
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          {template.id}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+
+              dispatch({
+                name: "ADD_COLUMN",
+                payload: {
+                  parentId: parentId,
+                  targetId: template.id,
+                  before: true,
+                },
+              });
+            }}
+          >
+            col before
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+
+              dispatch({
+                name: "ADD_COLUMN",
+                payload: {
+                  parentId: parentId,
+                  targetId: template.id,
+                  before: false,
+                },
+              });
+            }}
+          >
+            col after
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+
+              dispatch({
+                name: "ADD_ROW",
+                payload: {
+                  parentId: parentId,
+                  targetId: template.id,
+                  before: true,
+                },
+              });
+            }}
+          >
+            row before
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+
+              dispatch({
+                name: "ADD_ROW",
+                payload: {
+                  parentId: parentId,
+                  targetId: template.id,
+                  before: false,
+                },
+              });
+            }}
+          >
+            row after
+          </button>
+        </div>
       )}
       <button data-divider onClick={(e) => e.stopPropagation()} {...bind()} />
     </div>
