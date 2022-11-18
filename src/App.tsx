@@ -2,14 +2,11 @@ import { useCallback, useReducer } from "react";
 import "./App.css";
 import { defaultTemplate, getCombinedMinSizes } from "./Grid/get-sizes";
 import { Grid, reducer } from "./Grid/Grid";
+import "./Grid/css-grid";
+import { CssGrid, renderTemplate } from "./Grid/css-grid";
 
 function App() {
-  const renderContent = useCallback(() => {
-    return <div style={{ color: "#888" }} className="content"></div>;
-  }, []);
-
-  const [state, dispatch] = useReducer(reducer, defaultTemplate);
-
+  console.log(renderTemplate);
   return (
     <div
       style={{
@@ -20,12 +17,7 @@ function App() {
         padding: "8px",
       }}
     >
-      <Grid
-        template={state.root}
-        dispatch={dispatch}
-        rootTemplate={state}
-        renderContent={renderContent}
-      />
+      <CssGrid template={renderTemplate} />
     </div>
   );
 }
