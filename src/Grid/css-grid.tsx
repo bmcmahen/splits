@@ -88,10 +88,14 @@ export function splitCol(area: string, areaToAdd: string, template: Template) {
   return template;
 }
 
-export const renderTemplate = splitRow(
-  "d",
-  "e",
-  splitCol("c", "d", splitRow("b", "c", splitRow("a", "b", template)))
+export const renderTemplate = splitCol(
+  "a",
+  "f",
+  splitRow(
+    "d",
+    "e",
+    splitCol("c", "d", splitRow("b", "c", splitRow("a", "b", template)))
+  )
 );
 
 export function CssGrid({ template }: { template: Template }) {
@@ -103,6 +107,8 @@ export function CssGrid({ template }: { template: Template }) {
       style={{
         gap: "8px",
         display: "grid",
+        width: "100%",
+        height: "100%",
         gridTemplateRows,
         gridTemplateColumns,
       }}
@@ -117,7 +123,7 @@ export function CssGrid({ template }: { template: Template }) {
               gridColumnEnd: colEnd + 1,
               gridRowStart: rowStart,
               gridRowEnd: rowEnd + 1,
-              background: "red",
+              background: "whitesmoke",
             }}
           >
             {area}

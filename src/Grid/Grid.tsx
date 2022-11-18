@@ -109,6 +109,7 @@ export function reducer(state: Template, action: Actions) {
         const newContent: Content = {
           id: newId,
           size: nextSize,
+          renderId: newId,
         };
 
         // remove some size from each existing child. todo: account for min sizes
@@ -144,17 +145,20 @@ export function reducer(state: Template, action: Actions) {
         ...state,
         [targetId]: {
           ...state[targetId],
+          renderId: null,
           direction: "horizontal",
           items: [newId, subChildId],
         },
         [newId]: {
           id: newId,
           size: 500,
+          renderId: newId,
         },
         [subChildId]: {
           ...state[targetId],
           id: subChildId,
           size: 500,
+          renderId: state[targetId].renderId,
         },
       };
 
@@ -196,6 +200,7 @@ export function reducer(state: Template, action: Actions) {
         const newContent: Content = {
           id: newId,
           size: nextSize,
+          renderId: newId,
         };
 
         // remove some size from each existing child. todo: account for min sizes
@@ -237,11 +242,13 @@ export function reducer(state: Template, action: Actions) {
         [newId]: {
           id: newId,
           size: 500,
+          renderId: state[targetId].renderId,
         },
         [subChildId]: {
           ...state[targetId],
           id: subChildId,
           size: 500,
+          renderId: subChildId,
         },
       };
 
@@ -403,7 +410,8 @@ export function Grid({
             height: "100%",
           }}
         >
-          {template.id}
+          {template.renderId}
+          <input />
           <button
             onClick={(e) => {
               e.stopPropagation();

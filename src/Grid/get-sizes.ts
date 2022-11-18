@@ -1,5 +1,62 @@
 import { Template, defaultTemplate } from "./Grid";
 
+export function getSizes(
+  id: string,
+  template: Template,
+  width = 100,
+  height = 100,
+  top = 0,
+  left = 0,
+  dimensions = {}
+) {
+  const { items, direction } = template[id];
+
+  if (!items) {
+    return {
+      ...dimensions,
+      [id]: {
+        width,
+        height,
+        top,
+        left,
+      },
+    };
+  }
+
+  items.forEach((item) => {
+    const { size } = template[item];
+    if (direction === "vertical") {
+      dimensions = getSizes(
+        item,
+        template,
+        width,
+        size * 0.01 * height,
+        top,
+        left,
+        dimensions
+      );
+
+      top += size;
+      // height -= size;
+    } else if (direction === "horizontal") {
+      dimensions = getSizes(
+        item,
+        template,
+        size * 0.01 * width,
+        height,
+        top,
+        left,
+        dimensions
+      );
+
+      left += size;
+      // width -= size;
+    }
+  });
+
+  return dimensions;
+}
+
 export function getCombinedMinSizes(
   id: string,
   template: Template,
@@ -47,37 +104,37 @@ export function getCombinedMinSizes(
 }
 
 export const defaultTemplate: Template = {
-  root: {
-    id: "root",
-
-    size: 1000,
-  },
   a: {
     id: "a",
-    size: 500,
+    size: 100,
+    direction: "horizontal",
+    items: ["b", "c"],
   },
   b: {
     id: "b",
-    size: 500,
+    size: 50,
   },
   c: {
     id: "c",
-    size: 500,
+    size: 50,
+    items: ["d", "e", "f"],
+    direction: "vertical",
   },
   d: {
     id: "d",
-    size: 500,
+    size: 25,
   },
   e: {
     id: "e",
-    size: 500,
+    size: 25,
   },
   f: {
     id: "f",
-    size: 500,
+    size: 50,
   },
 };
 
+console.log(getSizes("a", defaultTemplate));
 export function getNextGridSizesDuringPan(
   currentIndex: number,
   panProp: number,

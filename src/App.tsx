@@ -3,10 +3,14 @@ import "./App.css";
 import { defaultTemplate, getCombinedMinSizes } from "./Grid/get-sizes";
 import { Grid, reducer } from "./Grid/Grid";
 import "./Grid/css-grid";
-import { CssGrid, renderTemplate } from "./Grid/css-grid";
 
 function App() {
-  console.log(renderTemplate);
+  const renderContent = useCallback(() => {
+    return <div style={{ color: "#888" }} className="content"></div>;
+  }, []);
+
+  const [state, dispatch] = useReducer(reducer, defaultTemplate);
+
   return (
     <div
       style={{
@@ -17,7 +21,12 @@ function App() {
         padding: "8px",
       }}
     >
-      <CssGrid template={renderTemplate} />
+      <Grid
+        template={state.a}
+        dispatch={dispatch}
+        rootTemplate={state}
+        renderContent={renderContent}
+      />
     </div>
   );
 }
